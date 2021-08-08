@@ -9,11 +9,8 @@ class OrderController extends Controller
 {
     private function getMidtransSnap($params)
     {
-        // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
         \Midtrans\Config::$isProduction = filter_var(env('MIDTRANS_PRODUCTION'), FILTER_VALIDATE_BOOLEAN);
-        // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = filter_var(env('MIDTRANS_3DS'), FILTER_VALIDATE_BOOLEAN);
 
         $snap_url = \Midtrans\Snap::createTransaction($params)->redirect_url;
@@ -47,7 +44,44 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = $request->input('user');
+        $course = $request->input('course');
+
+        $order = Order::create([
+            'user_id' => $user['id'],
+            'course_id' => $course['id']
+        ]);
+
+        $transaction_details = [
+            "order_id" => $order->id,
+            "gross_amount" => $course['price'],
+        ];
+
+        $item_details = [
+            [
+                "id" => $course['id'],
+                "price" => $course['price'],
+                "quantity" => 1,
+                "name" => $course['name'],
+                "brand" => "indexa",
+                "category" => "Online Course"
+            ]
+        ];
+
+        $customer_details = [
+            "first_name" => "Mahfuzon Akhiar",
+            "email" => "Mahfuzon0@gmail.com"
+        ];
+
+        $midtransParams = [
+            "transaction_details" => $transaction_details,
+            "item_details" => $item_details,
+            "customer_details" => $customer_details
+        ];
+
+        $midtransSnapUrl = $this->getMidtransSnap($midtransParams);
+        return $midtransSnapUrl;
+        // return response()->json($order);
     }
 
     /**
