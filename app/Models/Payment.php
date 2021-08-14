@@ -16,5 +16,6 @@ class Payment extends Model
     protected $cast = [
         'created_at' => 'datetime:Y-m-d H:m:s',
         'updated_at' => 'datetime:Y-m-d H:m:s',
+        'raw_response' => 'array'
     ];
 }
