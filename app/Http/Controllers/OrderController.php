@@ -64,7 +64,7 @@ class OrderController extends Controller
         ]);
 
         $transaction_details = [
-            "order_id" => $order->id.Str::random(5),
+            "order_id" => $order->id . '-' . Str::random(5),
             "gross_amount" => $course['price'],
         ];
 
@@ -80,8 +80,8 @@ class OrderController extends Controller
         ];
 
         $customer_details = [
-            "first_name" => "Mahfuzon Akhiar",
-            "email" => "Mahfuzon0@gmail.com"
+            "first_name" => $user['name'],
+            "email" => $user['email']
         ];
 
         $midtransParams = [
